@@ -8,6 +8,7 @@ setup(
     author_email='andibull@gmail.com',
     packages=find_packages(),
     install_requires=[
-        requests
+        requests,
+        django
     ],
 )
