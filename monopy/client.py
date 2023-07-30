@@ -19,7 +19,7 @@ class Transaction(object):
         self.__req_paths_params = {
             '/personal/statement': {
                 "account": '0',
-                "date_from": str(time.mktime(datetime.today().timetuple())),
+                "date_from": str(int(time.mktime(datetime.today().timetuple()))),
                 "date_to": ''
             }
         }
@@ -64,9 +64,11 @@ class Transaction(object):
 
         self.__req_paths_params[self.endpoint].update(
             account=account,
-            date_from=str(time.mktime(date_from.timetuple())),
-            date_to=str(time.mktime(date_to.timetuple()))
+            date_from=str(int(time.mktime(date_from.timetuple()))),
+            date_to=str(int(time.mktime(date_to.timetuple())))
         )
+
+        self.url = self._create_url()
 
     def _create_url(self):
         if self.endpoint == '/personal/statement':
@@ -136,15 +138,16 @@ class Client(object):
         """Return client id"""
         return self.client_info.get('webHookUrl')
 
-    def get_personal_statement(self, account: str, dttm_from: str, dttm_to: str = ''):
+    def get_personal_statement(self, account: str, dttm_from: str, dttm_to: str):
         """Return client's statements for the specific datetime interval"""
-        transaction = Transaction('GET', "/personal/client-info")
+        transaction = Transaction('GET', "/personal/statement")
         transaction.header = [self.__signature]
         transaction.path_param = [
             account,
             dttm_from,
             dttm_to
         ]
+        print(f"Return personal statement from {dttm_from} to {dttm_to}")
         return transaction.api_request()
 
     def get_bank_currency(self):
